@@ -2,8 +2,7 @@
 
 
 Level::Level(SDL_Renderer *renderer, int setTileCountX, int setTileCountY) :
-        tileCountX(setTileCountX), tileCountY(setTileCountY),
-        targetX(setTileCountX / 2), targetY(setTileCountY / 2) {
+        tileCountX(setTileCountX), tileCountY(setTileCountY){
     textureTileWall = TextureLoader::loadTexture(renderer, "Tile Wall2.bmp");
     textureTileTarget = TextureLoader::loadTexture(renderer, "Tile Target.bmp");
     textureTileEnemySpawner = TextureLoader::loadTexture(renderer, "EnemySpawner.bmp");
@@ -12,33 +11,27 @@ Level::Level(SDL_Renderer *renderer, int setTileCountX, int setTileCountY) :
     size_t listTilesSize = (size_t) tileCountX * tileCountY;
     listTiles.assign(listTilesSize, Tile{});
 
-    int xMax = tileCountX - 1;
-    int yMax = tileCountY - 1;
-    setTileType(0, 0, TileType::enemySpawner);
-    setTileType(xMax, 0, TileType::enemySpawner);
-    setTileType(0, yMax, TileType::enemySpawner);
-    setTileType(xMax, yMax, TileType::enemySpawner);
+    for (int y = 0; y < tileCountY; y++) {
+        for (int x = 0; x < tileCountX; x++) {
+            if (map_creator[y][x] == 2) {
+                setTileType(x, y, TileType::enemySpawner);
+            } else if (map_creator[y][x] == 0) {
+                setTileWall(x, y, true);
+            } else if (map_creator[y][x] == 3) {
+                targetX = x;
+                targetY = y;
+            }
+        }
+    }
 
     calculateFlowField();
 }
 
 
 void Level::draw(SDL_Renderer *renderer, int tileSize) {
-    for (int y = 0; y < tileCountY; y++) {
-        for (int x = 0; x < tileCountX; x++) {
-            if ((x + y) % 2 == 0)
-                SDL_SetRenderDrawColor(renderer, 240, 240, 240, 255);
-            else
-                SDL_SetRenderDrawColor(renderer, 225, 225, 225, 255);
-
-            SDL_Rect rect = {x * tileSize, y * tileSize, tileSize, tileSize};
-            SDL_RenderFillRect(renderer, &rect);
-        }
-    }
 
     for (int count = 0; count < listTiles.size(); count++)
         drawTile(renderer, (count % tileCountX), (count / tileCountX), tileSize);
-
 
 
     for (int y = 0; y < tileCountY; y++) {
@@ -71,15 +64,14 @@ void Level::draw(SDL_Renderer *renderer, int tileSize) {
     }
 }
 
-void Level::drawTile(SDL_Renderer* renderer, int x, int y, int tileSize) {
-    SDL_Texture* textureSelected = textureTileEmpty;
+void Level::drawTile(SDL_Renderer *renderer, int x, int y, int tileSize) {
+    SDL_Texture *textureSelected = textureTileEmpty;
 
     if (textureSelected != nullptr) {
-        SDL_Rect rect = { x * tileSize, y * tileSize, tileSize, tileSize };
+        SDL_Rect rect = {x * tileSize, y * tileSize, tileSize, tileSize};
         SDL_RenderCopy(renderer, textureSelected, nullptr, &rect);
     }
 }
-
 
 
 Vector2D Level::getRandomEnemySpawnerLocation() {
@@ -171,7 +163,7 @@ void Level::calculateDistances() {
         int indexCurrent = listIndicesToCheck.front();
         listIndicesToCheck.pop();
 
-        for (auto listNeighbor : listNeighbors) {
+        for (auto listNeighbor: listNeighbors) {
             int neighborX = listNeighbor[0] + indexCurrent % tileCountX;
             int neighborY = listNeighbor[1] + indexCurrent / tileCountX;
             int indexNeighbor = neighborX + neighborY * tileCountX;

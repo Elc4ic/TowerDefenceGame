@@ -1,4 +1,5 @@
 #pragma once
+
 #include <vector>
 #include <chrono>
 #include <memory>
@@ -10,46 +11,54 @@
 #include "Timer.h"
 
 
-class Game
-{
+class Game {
 private:
-	enum class PlacementMode {
-		wall,
-		turret
-	} placementModeCurrent;
+    enum class PlacementMode {
+        wall,
+        turret
+    } placementModeCurrent;
+
+    const int turrelCost = 100;
 
 
 public:
-	Game(SDL_Window* window, SDL_Renderer* renderer, int windowWidth, int windowHeight);
-	~Game();
+    Game(SDL_Window *window, SDL_Renderer *renderer, int windowWidth, int windowHeight);
+
+    ~Game();
 
 
 private:
-	void processEvents(SDL_Renderer* renderer, bool& running,double money);
-	void update(SDL_Renderer* renderer, float dT,int target_hp);
-	void updateUnits(float dT);
-	void updateProjectiles(float dT);
-	void updateSpawnUnitsIfRequired(SDL_Renderer* renderer, float dT);
-	void draw(SDL_Renderer* renderer);
-	void addUnit(SDL_Renderer* renderer, Vector2D posMouse);
-	void addTurret(SDL_Renderer* renderer, Vector2D posMouse);
-	void removeTurretsAtMousePosition(Vector2D posMouse);
+    void processEvents(SDL_Renderer *renderer, bool &running, int *money);
 
-	int mouseDownStatus = 0;
+    void update(SDL_Renderer *renderer, float dT, int *target_hp, int *money);
 
-	const int tileSize = 66;
-	Level level;
+    void updateUnits(float dT, int *target_hp, int *money);
 
-	std::vector<std::shared_ptr<Unit>> listUnits;
-	std::vector<Turret> listTurrets;
-	std::vector<Projectile> listProjectiles;
+    void updateProjectiles(float dT);
 
-	SDL_Texture* textureOverlay = nullptr;
-	SDL_Texture* textureHP = nullptr;
-	SDL_Texture* textureCoin = nullptr;
-	bool overlayVisible = true;
+    void updateSpawnUnitsIfRequired(SDL_Renderer *renderer, float dT);
 
-	Timer spawnTimer, roundTimer;
-	int spawnUnitCount = 0;
+    void draw(SDL_Renderer *renderer);
+
+    void addUnit(SDL_Renderer *renderer, Vector2D posMouse);
+
+    void addTurret(SDL_Renderer *renderer, Vector2D posMouse);
+
+    void removeTurretsAtMousePosition(Vector2D posMouse);
+
+    int mouseDownStatus = 0;
+
+    const int tileSize = 66;
+    Level level;
+
+    std::vector<std::shared_ptr<Unit>> listUnits;
+    std::vector<Turret> listTurrets;
+    std::vector<Projectile> listProjectiles;
+
+    SDL_Texture *textureHP = nullptr;
+    SDL_Texture *textureCoin = nullptr;
+
+    Timer spawnTimer, roundTimer;
+    int spawnUnitCount = 0;
 
 };

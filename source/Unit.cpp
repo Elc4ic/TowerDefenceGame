@@ -15,12 +15,14 @@ Unit::Unit(SDL_Renderer *renderer, Vector2D setPos) :
 }
 
 
-void Unit::update(float dT, Level &level, std::vector<std::shared_ptr<Unit>> &listUnits) {
+void Unit::update(float dT, Level &level, std::vector<std::shared_ptr<Unit>> &listUnits,int* target_hp) {
     timerJustHurt.countDown(dT);
 
     float distanceToTarget = (level.getTargetPos() - pos).Vlenght();
 
     if (distanceToTarget < 0.5f) {
+        (*target_hp)--;
+        std::cout<<(*target_hp)<<"/20"<<std::endl;
         healthCurrent = 0;
     } else {
         float distanceMove = speed * dT;
@@ -49,7 +51,7 @@ void Unit::update(float dT, Level &level, std::vector<std::shared_ptr<Unit>> &li
         }
 
         if (moveOk) {
-            const float spacing = 0.35f;
+            const float spacing = 0.25f;
             int x = (int) (pos.x + posAdd.x + std::copysign(spacing, posAdd.x));
             int y = (int) (pos.y);
             if (posAdd.x != 0.0f && !level.isTileWall(x, y))

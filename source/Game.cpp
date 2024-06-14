@@ -3,12 +3,11 @@
 
 
 Game::Game(SDL_Window *window, SDL_Renderer *renderer, int windowWidth, int windowHeight) :
-        placementModeCurrent(PlacementMode::wall),
+        placementModeCurrent(PlacementMode::turret),
         level(renderer, windowWidth / tileSize, windowHeight / tileSize),
         spawnTimer(0.25f), roundTimer(5.0f) {
 
     if (window != nullptr && renderer != nullptr) {
-        textureOverlay = TextureLoader::loadTexture(renderer, "Overlay.bmp");
         textureCoin = TextureLoader::loadTexture(renderer, "coin.bmp");
         textureHP = TextureLoader::loadTexture(renderer, "HP.bmp");
 
@@ -16,7 +15,7 @@ Game::Game(SDL_Window *window, SDL_Renderer *renderer, int windowWidth, int wind
         auto time2 = std::chrono::system_clock::now();
 
         const float dT = 1.0f / 60.0f;
-        double money = 200;
+        int money = 200;
         int target_hp = 20;
 
 
@@ -29,8 +28,8 @@ Game::Game(SDL_Window *window, SDL_Renderer *renderer, int windowWidth, int wind
             if (timeDeltaFloat >= dT) {
                 time1 = time2;
 
-                processEvents(renderer, running, money);
-                update(renderer, dT, target_hp);
+                processEvents(renderer, running, &money);
+                update(renderer, dT, &target_hp, &money);
                 draw(renderer);
             }
         }
@@ -43,7 +42,7 @@ Game::~Game() {
 }
 
 
-void Game::processEvents(SDL_Renderer *renderer, bool &running, double money) {
+void Game::processEvents(SDL_Renderer *renderer, bool &running, int *money) {
     bool mouseDownThisFrame = false;
 
     SDL_Event event;
@@ -69,16 +68,11 @@ void Game::processEvents(SDL_Renderer *renderer, bool &running, double money) {
                     case SDL_SCANCODE_ESCAPE:
                         running = false;
                         break;
-
                     case SDL_SCANCODE_1:
                         placementModeCurrent = PlacementMode::wall;
                         break;
                     case SDL_SCANCODE_2:
                         placementModeCurrent = PlacementMode::turret;
-                        break;
-
-                    case SDL_SCANCODE_H:
-                        overlayVisible = !overlayVisible;
                         break;
                 }
         }
@@ -94,18 +88,21 @@ void Game::processEvents(SDL_Renderer *renderer, bool &running, double money) {
             case SDL_BUTTON_LEFT:
                 switch (placementModeCurrent) {
                     case PlacementMode::wall:
-                        level.setTileWall((int) posMouse.x, (int) posMouse.y, true);
+                        /*   level.setTileWall((int) posMouse.x, (int) posMouse.y, true);*/
                         break;
                     case PlacementMode::turret:
-                        if (mouseDownThisFrame)
+                        if (mouseDownThisFrame && (*money) >= turrelCost) {
                             addTurret(renderer, posMouse);
+                            (*money) -= turrelCost;
+                            std::cout << (*money) << " ";
+                        }
                         break;
                 }
                 break;
 
 
             case SDL_BUTTON_RIGHT:
-                level.setTileWall((int) posMouse.x, (int) posMouse.y, false);
+                /*level.setTileWall((int) posMouse.x, (int) posMouse.y, false);*/
                 removeTurretsAtMousePosition(posMouse);
                 break;
         }
@@ -113,8 +110,8 @@ void Game::processEvents(SDL_Renderer *renderer, bool &running, double money) {
 }
 
 
-void Game::update(SDL_Renderer *renderer, float dT, int target_hp) {
-    updateUnits(dT);
+void Game::update(SDL_Renderer *renderer, float dT, int *target_hp, int *money) {
+    updateUnits(dT, target_hp, money);
 
     for (auto &turretSelected: listTurrets)
         turretSelected.update(renderer, dT, listUnits, listProjectiles);
@@ -125,15 +122,17 @@ void Game::update(SDL_Renderer *renderer, float dT, int target_hp) {
 }
 
 
-void Game::updateUnits(float dT) {
+void Game::updateUnits(float dT, int *target_hp, int *money) {
     auto it = listUnits.begin();
     while (it != listUnits.end()) {
         bool increment = true;
 
         if ((*it) != nullptr) {
-            (*it)->update(dT, level, listUnits);
+            (*it)->update(dT, level, listUnits, target_hp);
 
             if (!(*it)->isAlive()) {
+                (*money) += 50;
+                std::cout << (*money) << " ";
                 it = listUnits.erase(it);
                 increment = false;
             }
@@ -194,15 +193,15 @@ void Game::draw(SDL_Renderer *renderer) {
     for (auto &projectileSelected: listProjectiles)
         projectileSelected.draw(renderer, tileSize);
 
- /*   TTF_Font *Sans = TTF_OpenFont("Sans.ttf", 24);
-    SDL_Color White = {255, 255, 255};
-    SDL_Surface *surfaceMessage = TTF_RenderText_Solid(Sans,"20/20", White);
-    SDL_Texture *Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
-    SDL_Rect Message_rect;
-    Message_rect.x = 40;
-    Message_rect.y = 5;
-    Message_rect.w = 100;
-    Message_rect.h = 30;*/
+    /*   TTF_Font *Sans = TTF_OpenFont("Sans.ttf", 24);
+       SDL_Color White = {255, 255, 255};
+       SDL_Surface *surfaceMessage = TTF_RenderText_Solid(Sans,"20/20", White);
+       SDL_Texture *Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
+       SDL_Rect Message_rect;
+       Message_rect.x = 40;
+       Message_rect.y = 5;
+       Message_rect.w = 100;
+       Message_rect.h = 30;*/
 
     int wHP = 0, hHP = 0;
     int wC = 0, hC = 0;

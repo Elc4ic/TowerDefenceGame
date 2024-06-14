@@ -14,7 +14,7 @@ class Unit
 {
 public:
 	Unit(SDL_Renderer* renderer, Vector2D setPos);
-	void update(float dT, Level& level, std::vector<std::shared_ptr<Unit>>& listUnits);
+	void update(float dT, Level& level, std::vector<std::shared_ptr<Unit>>& listUnits,int* target_hp);
 	void draw(SDL_Renderer* renderer, int tileSize);
 	bool checkOverlap(Vector2D posOther, float sizeOther);
 	bool isAlive();
