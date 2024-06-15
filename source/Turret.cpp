@@ -20,7 +20,6 @@ void Turret::update(SDL_Renderer *renderer, float dT, std::vector<std::shared_pt
     if (auto unitTargetSP = unitTarget.lock()) {
         if (!unitTargetSP->isAlive() ||
                 (unitTargetSP->getPos() - pos).Vlenght() > weaponRange) {
-            //Then reset it.
             unitTarget.reset();
         }
     }

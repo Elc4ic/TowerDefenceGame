@@ -198,9 +198,9 @@ void Level::calculateFlowDirections() {
         if (listTiles[indexCurrent].flowDistance != flowDistanceMax) {
             unsigned char flowFieldBest = listTiles[indexCurrent].flowDistance;
 
-            for (int count = 0; count < 8; count++) {
-                int offsetX = listNeighbors[count][0];
-                int offsetY = listNeighbors[count][1];
+            for (auto listNeighbor : listNeighbors) {
+                int offsetX = listNeighbor[0];
+                int offsetY = listNeighbor[1];
 
                 int neighborX = offsetX + indexCurrent % tileCountX;
                 int neighborY = offsetY + indexCurrent / tileCountX;

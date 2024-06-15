@@ -5,7 +5,7 @@
 
 
 const float Unit::speed = 1.5f;
-const float Unit::size = 0.48f;
+const float Unit::size = 0.5f;
 
 
 Unit::Unit(SDL_Renderer *renderer, Vector2D setPos) :
@@ -51,7 +51,7 @@ void Unit::update(float dT, Level &level, std::vector<std::shared_ptr<Unit>> &li
         }
 
         if (moveOk) {
-            const float spacing = 0.25f;
+            const float spacing = 0.3f;
             int x = (int) (pos.x + posAdd.x + std::copysign(spacing, posAdd.x));
             int y = (int) (pos.y);
             if (posAdd.x != 0.0f && !level.isTileWall(x, y))
