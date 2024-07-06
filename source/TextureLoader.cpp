@@ -11,7 +11,7 @@ SDL_Texture *TextureLoader::loadTexture(SDL_Renderer *renderer, const std::strin
         if (found != umapTexturesLoaded.end()) {
             return found->second;
         } else {
-            std::string filepath = "../Data/Images/" + filename;
+            std::string filepath = "../Data/images/" + filename;
 
             SDL_Surface *surfaceTemp = SDL_LoadBMP(filepath.c_str());
             if (surfaceTemp != nullptr) {

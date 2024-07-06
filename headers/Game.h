@@ -14,11 +14,14 @@
 class Game {
 private:
     enum class PlacementMode {
-        wall,
-        turret
+        wizard,
+        archer,
+        grenadier
     } placementModeCurrent;
 
-    const int turrelCost = 100;
+    const int wizardCost = 120;
+    const int archerCost = 70;
+    const int grenadierCost = 200;
 
 
 public:
@@ -30,7 +33,7 @@ public:
 private:
     void processEvents(SDL_Renderer *renderer, bool &running, int *money);
 
-    void update(SDL_Renderer *renderer, float dT, int *target_hp, int *money);
+    void update(SDL_Renderer *renderer, float dT, int *target_hp, int *money, bool &running);
 
     void updateUnits(float dT, int *target_hp, int *money);
 
@@ -38,11 +41,11 @@ private:
 
     void updateSpawnUnitsIfRequired(SDL_Renderer *renderer, float dT);
 
-    void draw(SDL_Renderer *renderer);
+    void draw(SDL_Renderer *renderer, int *target_hp, int *money);
 
     void addUnit(SDL_Renderer *renderer, Vector2D posMouse);
 
-    void addTurret(SDL_Renderer *renderer, Vector2D posMouse);
+    void addTurret(SDL_Renderer *renderer, Vector2D posMouse, int TurretType, int *money);
 
     void removeTurretsAtMousePosition(Vector2D posMouse);
 

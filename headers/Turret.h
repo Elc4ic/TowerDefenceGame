@@ -13,12 +13,13 @@
 class Turret
 {
 public:
-	Turret(SDL_Renderer* renderer, Vector2D setPos);
+	Turret(SDL_Renderer* renderer, Vector2D setPos,float timer,std::string texture,float range,float degSpeed,int damage,bool splash);
+
 	void update(SDL_Renderer* renderer, float dT, std::vector<std::shared_ptr<Unit>>& listUnits,
 		std::vector<Projectile>& listProjectiles);
 	void draw(SDL_Renderer* renderer, int tileSize);
 	bool checkIfOnTile(int x, int y);
-
+    void lvlUp(int* money);
 
 private:
 	bool updateAngle(float dT);
@@ -29,8 +30,10 @@ private:
 
 
 	Vector2D pos;
-	float angle;
-	static const float speedAngular, weaponRange;
+	float speedAngular, weaponRange,angle;
+    int damage;
+    bool splash;
+    int lvl;
 
 	Timer timerWeapon;
 

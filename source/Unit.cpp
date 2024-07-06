@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include "Game.h"
+#include "SDL2/SDL_ttf.h"
 
 
 const float Unit::speed = 1.5f;
@@ -15,14 +16,13 @@ Unit::Unit(SDL_Renderer *renderer, Vector2D setPos) :
 }
 
 
-void Unit::update(float dT, Level &level, std::vector<std::shared_ptr<Unit>> &listUnits,int* target_hp) {
+void Unit::update(float dT, Level &level, std::vector<std::shared_ptr<Unit>> &listUnits, int *target_hp) {
     timerJustHurt.countDown(dT);
 
     float distanceToTarget = (level.getTargetPos() - pos).Vlenght();
 
     if (distanceToTarget < 0.5f) {
         (*target_hp)--;
-        std::cout<<(*target_hp)<<"/20"<<std::endl;
         healthCurrent = 0;
     } else {
         float distanceMove = speed * dT;
@@ -36,22 +36,9 @@ void Unit::update(float dT, Level &level, std::vector<std::shared_ptr<Unit>> &li
         Vector2D posAdd = directionNormal * distanceMove;
 
         bool moveOk = true;
-        for (int count = 0; count < listUnits.size() && moveOk; count++) {
-            auto &unitSelected = listUnits[count];
-            if (unitSelected != nullptr && unitSelected.get() != this &&
-                unitSelected->checkOverlap(pos, size)) {
-                Vector2D directionToOther = (unitSelected->pos - pos);
-                if (directionToOther.Vlenght() > 0.01f) {
-                    Vector2D normalToOther(directionToOther.normalize());
-                    float angleBtw = abs(normalToOther.angleBetween(directionNormal));
-                    if (angleBtw < 3.14159265359f / 4.0f)
-                        moveOk = false;
-                }
-            }
-        }
 
         if (moveOk) {
-            const float spacing = 0.3f;
+            const float spacing = size / 2;
             int x = (int) (pos.x + posAdd.x + std::copysign(spacing, posAdd.x));
             int y = (int) (pos.y);
             if (posAdd.x != 0.0f && !level.isTileWall(x, y))
@@ -61,6 +48,7 @@ void Unit::update(float dT, Level &level, std::vector<std::shared_ptr<Unit>> &li
             y = (int) (pos.y + posAdd.y + std::copysign(spacing, posAdd.y));
             if (posAdd.y != 0.0f && !level.isTileWall(x, y))
                 pos.y += posAdd.y;
+
         }
     }
 }
@@ -80,7 +68,21 @@ void Unit::draw(SDL_Renderer *renderer, int tileSize) {
                 (int) (pos.y * tileSize) - h / 2,
                 w,
                 h};
+
+        TTF_Font *font = TTF_OpenFont("../Data/font/fox5.ttf", 24);
+        SDL_Color TextColor = {255, 255, 255};
+        SDL_Surface *surfHPT = TTF_RenderText_Blended(font, std::to_string(healthCurrent).c_str(), TextColor);
+        SDL_Texture *textHP = SDL_CreateTextureFromSurface(renderer, surfHPT);
+        int wHP, hHP;
+        SDL_QueryTexture(textHP, nullptr, nullptr, &wHP, &hHP);
+        SDL_Rect rectHP = {
+                (int) (pos.x * tileSize) - wHP,
+                (int) (pos.y * tileSize) - hHP,
+                wHP / 2,
+                hHP / 2};
+
         SDL_RenderCopy(renderer, texture, nullptr, &rect);
+        SDL_RenderCopy(renderer, textHP, nullptr, &rectHP);
     }
 }
 

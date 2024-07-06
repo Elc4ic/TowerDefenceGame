@@ -20,8 +20,8 @@ set(SOURCE_FILES main.cpp
         source/Turret.cpp
         source/Unit.cpp
         source/Vector2D.cpp
-
+        source/TowerTypes.cpp
 )
 add_executable(OpenGLTest ${SOURCE_FILES})
 
-target_link_libraries(OpenGLTest mingw32 SDL2main SDL2)
+target_link_libraries(OpenGLTest mingw32 SDL2main SDL2_ttf SDL2)

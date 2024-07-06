@@ -1,14 +1,16 @@
 #include <iostream>
 #include "SDL2/SDL.h"
 #include "headers/Game.h"
+#include "SDL2/SDL_ttf.h"
 
 
 int main(int argc, char *args[]) {
 
     srand((unsigned) time(nullptr));
 
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+    if (SDL_Init(SDL_INIT_VIDEO) < 0 || TTF_Init() < 0) {
         std::cout << "Error: Couldn't initialize SDL Video or Audio = " << SDL_GetError() << std::endl;
+        std::cout << "Error: ttf = " << TTF_GetError() << std::endl;
         return 1;
     } else {
 
@@ -41,6 +43,7 @@ int main(int argc, char *args[]) {
             SDL_DestroyWindow(window);
         }
 
+        TTF_Quit();
         SDL_Quit();
     }
     return 0;

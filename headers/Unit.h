@@ -31,6 +31,6 @@ private:
 
 	Timer timerJustHurt;
 
-	const int healthMax = 2;
+	const int healthMax = 20;
 	int healthCurrent = healthMax;
 };

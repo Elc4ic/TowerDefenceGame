@@ -5,8 +5,8 @@ const float Projectile::speed = 20.0f, Projectile::size = 0.2f,
         Projectile::distanceTraveledMax = 20.0f;
 
 
-Projectile::Projectile(SDL_Renderer *renderer, Vector2D setPos, Vector2D setDirectionNormal) :
-        pos(setPos), directionNormal(setDirectionNormal) {
+Projectile::Projectile(SDL_Renderer *renderer, Vector2D setPos, Vector2D setDirectionNormal, int damage, bool splash) :
+        pos(setPos), directionNormal(setDirectionNormal), damage(damage), splash(splash) {
     texture = TextureLoader::loadTexture(renderer, "Projectile.bmp");
 }
 
@@ -47,7 +47,17 @@ void Projectile::checkCollisions(std::vector<std::shared_ptr<Unit>> &listUnits) 
         for (int count = 0; count < listUnits.size() && !collisionOccurred; count++) {
             auto &unitSelected = listUnits[count];
             if (unitSelected != nullptr && unitSelected->checkOverlap(pos, size)) {
-                unitSelected->removeHealth(1);
+                if (splash) {
+                    float splashSize = 1.5f;
+                    for (int count = 0; count < listUnits.size() && !collisionOccurred; count++) {
+                        auto &unitSelected = listUnits[count];
+                        if (unitSelected != nullptr && unitSelected->checkOverlap(pos, splashSize)) {
+                            unitSelected->removeHealth(damage);
+                        }
+                    }
+                } else {
+                    unitSelected->removeHealth(damage);
+                }
                 collisionOccurred = true;
             }
         }

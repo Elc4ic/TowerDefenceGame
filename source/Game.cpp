@@ -1,9 +1,12 @@
 #include "Game.h"
 #include "SDL2/SDL.h"
+#include "TowerTypes.h"
+#include "Level.h"
+#include "SDL2/SDL_ttf.h"
 
 
 Game::Game(SDL_Window *window, SDL_Renderer *renderer, int windowWidth, int windowHeight) :
-        placementModeCurrent(PlacementMode::turret),
+        placementModeCurrent(PlacementMode::archer),
         level(renderer, windowWidth / tileSize, windowHeight / tileSize),
         spawnTimer(0.25f), roundTimer(5.0f) {
 
@@ -14,8 +17,8 @@ Game::Game(SDL_Window *window, SDL_Renderer *renderer, int windowWidth, int wind
         auto time1 = std::chrono::system_clock::now();
         auto time2 = std::chrono::system_clock::now();
 
-        const float dT = 1.0f / 60.0f;
-        int money = 200;
+        const float dT = 1.0f / 50.0f;
+        int money = 600;
         int target_hp = 20;
 
 
@@ -29,8 +32,8 @@ Game::Game(SDL_Window *window, SDL_Renderer *renderer, int windowWidth, int wind
                 time1 = time2;
 
                 processEvents(renderer, running, &money);
-                update(renderer, dT, &target_hp, &money);
-                draw(renderer);
+                update(renderer, dT, &target_hp, &money, running);
+                draw(renderer, &target_hp, &money);
             }
         }
     }
@@ -69,11 +72,16 @@ void Game::processEvents(SDL_Renderer *renderer, bool &running, int *money) {
                         running = false;
                         break;
                     case SDL_SCANCODE_1:
-                        placementModeCurrent = PlacementMode::wall;
+                        placementModeCurrent = PlacementMode::wizard;
                         break;
                     case SDL_SCANCODE_2:
-                        placementModeCurrent = PlacementMode::turret;
+                        placementModeCurrent = PlacementMode::archer;
                         break;
+                    case SDL_SCANCODE_3:
+                        placementModeCurrent = PlacementMode::grenadier;
+                        break;
+
+
                 }
         }
     }
@@ -87,14 +95,19 @@ void Game::processEvents(SDL_Renderer *renderer, bool &running, int *money) {
         switch (mouseDownStatus) {
             case SDL_BUTTON_LEFT:
                 switch (placementModeCurrent) {
-                    case PlacementMode::wall:
-                        /*   level.setTileWall((int) posMouse.x, (int) posMouse.y, true);*/
+                    case PlacementMode::wizard:
+                        if (mouseDownThisFrame && (*money) >= wizardCost) {
+                            addTurret(renderer, posMouse, 1, money);
+                        }
                         break;
-                    case PlacementMode::turret:
-                        if (mouseDownThisFrame && (*money) >= turrelCost) {
-                            addTurret(renderer, posMouse);
-                            (*money) -= turrelCost;
-                            std::cout << (*money) << " ";
+                    case PlacementMode::archer:
+                        if (mouseDownThisFrame && (*money) >= archerCost) {
+                            addTurret(renderer, posMouse, 2, money);
+                        }
+                        break;
+                    case PlacementMode::grenadier:
+                        if (mouseDownThisFrame && (*money) >= grenadierCost) {
+                            addTurret(renderer, posMouse, 3, money);
                         }
                         break;
                 }
@@ -102,7 +115,6 @@ void Game::processEvents(SDL_Renderer *renderer, bool &running, int *money) {
 
 
             case SDL_BUTTON_RIGHT:
-                /*level.setTileWall((int) posMouse.x, (int) posMouse.y, false);*/
                 removeTurretsAtMousePosition(posMouse);
                 break;
         }
@@ -110,7 +122,7 @@ void Game::processEvents(SDL_Renderer *renderer, bool &running, int *money) {
 }
 
 
-void Game::update(SDL_Renderer *renderer, float dT, int *target_hp, int *money) {
+void Game::update(SDL_Renderer *renderer, float dT, int *target_hp, int *money, bool &running) {
     updateUnits(dT, target_hp, money);
 
     for (auto &turretSelected: listTurrets)
@@ -119,6 +131,12 @@ void Game::update(SDL_Renderer *renderer, float dT, int *target_hp, int *money) 
     updateProjectiles(dT);
 
     updateSpawnUnitsIfRequired(renderer, dT);
+    if (*target_hp == 0) {
+        listTurrets.clear();
+        listUnits.clear();
+        listUnits.clear();
+        running = false;
+    }
 }
 
 
@@ -131,8 +149,7 @@ void Game::updateUnits(float dT, int *target_hp, int *money) {
             (*it)->update(dT, level, listUnits, target_hp);
 
             if (!(*it)->isAlive()) {
-                (*money) += 50;
-                std::cout << (*money) << " ";
+                (*money) += 10;
                 it = listUnits.erase(it);
                 increment = false;
             }
@@ -177,7 +194,7 @@ void Game::updateSpawnUnitsIfRequired(SDL_Renderer *renderer, float dT) {
 }
 
 
-void Game::draw(SDL_Renderer *renderer) {
+void Game::draw(SDL_Renderer *renderer, int *target_hp, int *money) {
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
 
@@ -193,18 +210,41 @@ void Game::draw(SDL_Renderer *renderer) {
     for (auto &projectileSelected: listProjectiles)
         projectileSelected.draw(renderer, tileSize);
 
-    /*   TTF_Font *Sans = TTF_OpenFont("Sans.ttf", 24);
-       SDL_Color White = {255, 255, 255};
-       SDL_Surface *surfaceMessage = TTF_RenderText_Solid(Sans,"20/20", White);
-       SDL_Texture *Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
-       SDL_Rect Message_rect;
-       Message_rect.x = 40;
-       Message_rect.y = 5;
-       Message_rect.w = 100;
-       Message_rect.h = 30;*/
-
+    int wHPT = 0, hHPT = 0;
+    int wMT = 0, hMT = 0;
     int wHP = 0, hHP = 0;
+    int wM = 0, hM = 0;
     int wC = 0, hC = 0;
+
+    TTF_Font *font = TTF_OpenFont("../Data/font/fox5.ttf", 24);
+    SDL_Color TextColor = {255, 255, 255};
+    SDL_Surface *surfHPT = TTF_RenderText_Blended(font, std::to_string(*target_hp).c_str(), TextColor);
+    SDL_Surface *surfMoneyT = TTF_RenderText_Blended(font, std::to_string(*money).c_str(), TextColor);
+    SDL_Surface *surfM;
+    switch (placementModeCurrent) {
+        case PlacementMode::wizard:
+            surfM = TTF_RenderText_Blended(font, "wizard", TextColor);
+            break;
+        case PlacementMode::archer:
+            surfM = TTF_RenderText_Blended(font, "archer", TextColor);
+            break;
+        case PlacementMode::grenadier:
+            surfM = TTF_RenderText_Blended(font, "grenadier", TextColor);
+            break;
+    }
+    SDL_Texture *textHP = SDL_CreateTextureFromSurface(renderer, surfHPT);
+    SDL_Texture *textMoney = SDL_CreateTextureFromSurface(renderer, surfMoneyT);
+    SDL_Texture *textMode = SDL_CreateTextureFromSurface(renderer, surfM);
+    SDL_QueryTexture(textHP, nullptr, nullptr, &wHPT, &hHPT);
+    SDL_QueryTexture(textMoney, nullptr, nullptr, &wMT, &hMT);
+    SDL_QueryTexture(textMode, nullptr, nullptr, &wM, &hM);
+    SDL_Rect textHP_rect = {40, 5, wHPT, hHPT};
+    SDL_Rect textM_rect = {130, 5, wMT, hMT};
+    SDL_Rect textMode_rect = {200, 5, wM, hM};
+    SDL_RenderCopy(renderer, textHP, nullptr, &textHP_rect);
+    SDL_RenderCopy(renderer, textMoney, nullptr, &textM_rect);
+    SDL_RenderCopy(renderer, textMode, nullptr, &textMode_rect);
+
     SDL_QueryTexture(textureHP, nullptr, nullptr, &wHP, &hHP);
     SDL_QueryTexture(textureCoin, nullptr, nullptr, &wC, &hC);
     SDL_Rect rectHP = {5, 5, wHP, hHP};
@@ -221,11 +261,29 @@ void Game::addUnit(SDL_Renderer *renderer, Vector2D posMouse) {
 }
 
 
-void Game::addTurret(SDL_Renderer *renderer, Vector2D posMouse) {
+void Game::addTurret(SDL_Renderer *renderer, Vector2D posMouse, int TurretType, int *money) {
+    for (auto it = listTurrets.begin(); it != listTurrets.end();) {
+        if ((*it).checkIfOnTile((int) posMouse.x, (int) posMouse.y)) {
+            (*it).lvlUp(money);
+            return;
+        } else
+            it++;
+    }
     Vector2D pos((int) posMouse.x + 0.5f, (int) posMouse.y + 0.5f);
-    listTurrets.emplace_back(renderer, pos);
+    if (TurretType == 1) {
+        Wizard wizard = {renderer, pos};
+        listTurrets.emplace_back(wizard);
+        (*money) -= wizardCost;
+    } else if (TurretType == 2) {
+        Archer arch = {renderer, pos};
+        listTurrets.emplace_back(arch);
+        (*money) -= archerCost;
+    } else {
+        Grenadier grenadier = {renderer, pos};
+        listTurrets.emplace_back(grenadier);
+        (*money) -= grenadierCost;
+    }
 }
-
 
 void Game::removeTurretsAtMousePosition(Vector2D posMouse) {
     for (auto it = listTurrets.begin(); it != listTurrets.end();) {
