@@ -4,9 +4,10 @@
 #include <cmath>
 
 Turret::Turret(SDL_Renderer *renderer, Vector2D setPos, float timer, std::string texture, float range, float degSpeed,
-               int damage, bool splash) :
+               int damage, bool splash, float slow, float distMax, int damagePerLVL) :
         pos(setPos), angle(0.0f), timerWeapon(timer), weaponRange(range),
-        speedAngular(MathAddon::angleDegToRad(degSpeed)), damage(damage), splash(splash), lvl(1) {
+        speedAngular(MathAddon::angleDegToRad(degSpeed)), damage(damage), splash(splash), lvl(1), slow(slow),
+        distMax(distMax), damagePerLvl(damagePerLVL) {
     textureMain = TextureLoader::loadTexture(renderer, texture);
     textureShadow = TextureLoader::loadTexture(renderer, "Turret Shadow.bmp");
 }
@@ -18,7 +19,7 @@ void Turret::update(SDL_Renderer *renderer, float dT, std::vector<std::shared_pt
 
     if (auto unitTargetSP = unitTarget.lock()) {
         if (!unitTargetSP->isAlive() ||
-            (unitTargetSP->getPos() - pos).Vlenght() > weaponRange + lvl * 0.25) {
+            (unitTargetSP->getPos() - pos).Vlenght() > weaponRange + lvl * 0.15) {
             unitTarget.reset();
         }
     }
@@ -52,21 +53,21 @@ bool Turret::updateAngle(float dT) {
 
 void Turret::shootProjectile(SDL_Renderer *renderer, std::vector<Projectile> &listProjectiles) {
     if (timerWeapon.timeSIsZero()) {
-        listProjectiles.emplace_back(renderer, pos, Vector2D(angle), damage + lvl, splash);
+        listProjectiles.emplace_back(renderer, pos, Vector2D(angle), damage + lvl * damagePerLvl, splash, slow, distMax);
 
         timerWeapon.resetToMax();
     }
 }
 
 
-void Turret::draw(SDL_Renderer *renderer, int tileSize) {
+void Turret::draw(SDL_Renderer *renderer, int tileSize, TTF_Font *font) {
     drawTextureWithOffset(renderer, textureShadow, 5, tileSize);
     drawTextureWithOffset(renderer, textureMain, 0, tileSize);
-    TTF_Font *font = TTF_OpenFont("../Data/font/fox5.ttf", 34);
     SDL_Color TextColor = {255, 255, 255};
-    SDL_Surface *surfLVL = TTF_RenderText_Blended(font, (std::to_string(lvl) + " " +
-                                                         std::to_string(50 * lvl * lvl)).c_str(), TextColor);
-    SDL_Texture *textLVL = SDL_CreateTextureFromSurface(renderer, surfLVL);
+    surfLVL = TTF_RenderText_Blended(font,
+                                     (std::to_string(lvl) + " " + std::to_string(50 * lvl * lvl)).c_str(),
+                                     TextColor);
+    textLVL = SDL_CreateTextureFromSurface(renderer, surfLVL);
     int wHP, hHP;
     SDL_QueryTexture(textLVL, nullptr, nullptr, &wHP, &hHP);
     SDL_Rect rectHP = {
@@ -74,8 +75,9 @@ void Turret::draw(SDL_Renderer *renderer, int tileSize) {
             (int) (pos.y * tileSize) - hHP,
             wHP / 2,
             hHP / 2};
-
+    SDL_FreeSurface(surfLVL);
     SDL_RenderCopy(renderer, textLVL, nullptr, &rectHP);
+    SDL_DestroyTexture(textLVL);
 }
 
 void Turret::lvlUp(int *money) {

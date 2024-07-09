@@ -126,6 +126,13 @@ build CMakeFiles/OpenGLTest.dir/source/TowerTypes.cpp.obj: CXX_COMPILER__OpenGLT
   OBJECT_DIR = CMakeFiles\OpenGLTest.dir
   OBJECT_FILE_DIR = CMakeFiles\OpenGLTest.dir\source
 
+build CMakeFiles/OpenGLTest.dir/source/UnitTypes.cpp.obj: CXX_COMPILER__OpenGLTest_unscanned_Debug D$:/C_project/TowerDefense/source/UnitTypes.cpp || cmake_object_order_depends_target_OpenGLTest
+  DEP_FILE = CMakeFiles\OpenGLTest.dir\source\UnitTypes.cpp.obj.d
+  FLAGS = -std=c++11 -lmingw32 -g -std=gnu++14 -fdiagnostics-color=always
+  INCLUDES = -ID:/C_project/TowerDefense/headers -ID:/C_project/TowerDefense/source -ID:/C_project/TowerDefense/include
+  OBJECT_DIR = CMakeFiles\OpenGLTest.dir
+  OBJECT_FILE_DIR = CMakeFiles\OpenGLTest.dir\source
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target OpenGLTest
@@ -134,7 +141,7 @@ build CMakeFiles/OpenGLTest.dir/source/TowerTypes.cpp.obj: CXX_COMPILER__OpenGLT
 #############################################
 # Link the executable OpenGLTest.exe
 
-build OpenGLTest.exe: CXX_EXECUTABLE_LINKER__OpenGLTest_Debug CMakeFiles/OpenGLTest.dir/main.cpp.obj CMakeFiles/OpenGLTest.dir/source/Game.cpp.obj CMakeFiles/OpenGLTest.dir/source/Level.cpp.obj CMakeFiles/OpenGLTest.dir/source/MathAddon.cpp.obj CMakeFiles/OpenGLTest.dir/source/Projectile.cpp.obj CMakeFiles/OpenGLTest.dir/source/TextureLoader.cpp.obj CMakeFiles/OpenGLTest.dir/source/Timer.cpp.obj CMakeFiles/OpenGLTest.dir/source/Turret.cpp.obj CMakeFiles/OpenGLTest.dir/source/Unit.cpp.obj CMakeFiles/OpenGLTest.dir/source/Vector2D.cpp.obj CMakeFiles/OpenGLTest.dir/source/TowerTypes.cpp.obj
+build OpenGLTest.exe: CXX_EXECUTABLE_LINKER__OpenGLTest_Debug CMakeFiles/OpenGLTest.dir/main.cpp.obj CMakeFiles/OpenGLTest.dir/source/Game.cpp.obj CMakeFiles/OpenGLTest.dir/source/Level.cpp.obj CMakeFiles/OpenGLTest.dir/source/MathAddon.cpp.obj CMakeFiles/OpenGLTest.dir/source/Projectile.cpp.obj CMakeFiles/OpenGLTest.dir/source/TextureLoader.cpp.obj CMakeFiles/OpenGLTest.dir/source/Timer.cpp.obj CMakeFiles/OpenGLTest.dir/source/Turret.cpp.obj CMakeFiles/OpenGLTest.dir/source/Unit.cpp.obj CMakeFiles/OpenGLTest.dir/source/Vector2D.cpp.obj CMakeFiles/OpenGLTest.dir/source/TowerTypes.cpp.obj CMakeFiles/OpenGLTest.dir/source/UnitTypes.cpp.obj
   FLAGS = -std=c++11 -lmingw32 -g
   LINK_FLAGS = -static-libgcc -static-libstdc++
   LINK_LIBRARIES = -lmingw32  -lSDL2main  -lSDL2_ttf  -lSDL2  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32

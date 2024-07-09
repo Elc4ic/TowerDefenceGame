@@ -21,6 +21,8 @@ set(SOURCE_FILES main.cpp
         source/Unit.cpp
         source/Vector2D.cpp
         source/TowerTypes.cpp
+        source/UnitTypes.cpp
+        headers/UnitTypes.h
 )
 add_executable(OpenGLTest ${SOURCE_FILES})
 

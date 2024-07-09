@@ -13,11 +13,11 @@
 class Turret
 {
 public:
-	Turret(SDL_Renderer* renderer, Vector2D setPos,float timer,std::string texture,float range,float degSpeed,int damage,bool splash);
+	Turret(SDL_Renderer* renderer, Vector2D setPos,float timer,std::string texture,float range,float degSpeed,int damage,bool splash,float slow,float distMax,int damagePerLVL);
 
 	void update(SDL_Renderer* renderer, float dT, std::vector<std::shared_ptr<Unit>>& listUnits,
 		std::vector<Projectile>& listProjectiles);
-	void draw(SDL_Renderer* renderer, int tileSize);
+	void draw(SDL_Renderer* renderer, int tileSize, TTF_Font* font);
 	bool checkIfOnTile(int x, int y);
     void lvlUp(int* money);
 
@@ -34,6 +34,9 @@ private:
     int damage;
     bool splash;
     int lvl;
+    float distMax;
+    float slow;
+    int damagePerLvl;
 
 	Timer timerWeapon;
 
@@ -41,5 +44,8 @@ private:
 
 	SDL_Texture* textureMain = nullptr,
 		* textureShadow = nullptr;
+
+    SDL_Surface *surfLVL;
+    SDL_Texture *textLVL;
 
 };

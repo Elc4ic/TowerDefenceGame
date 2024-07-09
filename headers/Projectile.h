@@ -9,7 +9,7 @@
 
 class Projectile {
 public:
-    Projectile(SDL_Renderer *renderer, Vector2D setPos, Vector2D setDirectionNormal,int damage,bool splash);
+    Projectile(SDL_Renderer *renderer, Vector2D setPos, Vector2D setDirectionNormal,int damage,bool splash,float slow,float distMax);
 
     void update(float dT, std::vector<std::shared_ptr<Unit>> &listUnits);
 
@@ -23,10 +23,12 @@ private:
 
 
     Vector2D pos, directionNormal;
-    static const float speed, size, distanceTraveledMax;
+    static const float speed, size;
+    float distanceTraveledMax;
     float distanceTraveled = 0.0f;
     int damage;
     bool splash;
+    float slow;
 
     SDL_Texture *texture = nullptr;
 

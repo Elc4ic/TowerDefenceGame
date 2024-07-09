@@ -5,27 +5,32 @@
 #include "SDL2/SDL_ttf.h"
 
 
-const float Unit::speed = 1.5f;
 const float Unit::size = 0.5f;
 
 
-Unit::Unit(SDL_Renderer *renderer, Vector2D setPos) :
-        pos(setPos), timerJustHurt(0.25f) {
-    texture = TextureLoader::loadTexture(renderer, "Unit.bmp");
-
+Unit::Unit(SDL_Renderer *renderer, Vector2D setPos, const std::string &textureName, float speed, int hp) :
+        pos(setPos), timerJustHurt(0.25f), hp(hp), speed(speed), timerSlowed(1.0f) {
+    texture = TextureLoader::loadTexture(renderer, textureName);
 }
 
 
 void Unit::update(float dT, Level &level, std::vector<std::shared_ptr<Unit>> &listUnits, int *target_hp) {
     timerJustHurt.countDown(dT);
+    timerSlowed.countDown(dT);
 
     float distanceToTarget = (level.getTargetPos() - pos).Vlenght();
 
     if (distanceToTarget < 0.5f) {
         (*target_hp)--;
-        healthCurrent = 0;
+        hp = 0;
     } else {
-        float distanceMove = speed * dT;
+        float distanceMove;
+        if (!timerSlowed.timeSIsZero()) distanceMove = speed * dT * slowed;
+        else {
+            distanceMove = speed * dT;
+            slowed = 1.0f;
+        }
+
         if (distanceMove > distanceToTarget)
             distanceMove = distanceToTarget;
 
@@ -35,30 +40,26 @@ void Unit::update(float dT, Level &level, std::vector<std::shared_ptr<Unit>> &li
 
         Vector2D posAdd = directionNormal * distanceMove;
 
-        bool moveOk = true;
-
-        if (moveOk) {
-            const float spacing = size / 2;
-            int x = (int) (pos.x + posAdd.x + std::copysign(spacing, posAdd.x));
-            int y = (int) (pos.y);
-            if (posAdd.x != 0.0f && !level.isTileWall(x, y))
-                pos.x += posAdd.x;
-
-            x = (int) (pos.x);
-            y = (int) (pos.y + posAdd.y + std::copysign(spacing, posAdd.y));
-            if (posAdd.y != 0.0f && !level.isTileWall(x, y))
-                pos.y += posAdd.y;
-
-        }
+        const float spacing = size / 2;
+        int x = (int) (pos.x + posAdd.x + std::copysign(spacing, posAdd.x));
+        int y = (int) (pos.y);
+        if (posAdd.x != 0.0f && !level.isTileWall(x, y))
+            pos.x += posAdd.x;
+        x = (int) (pos.x);
+        y = (int) (pos.y + posAdd.y + std::copysign(spacing, posAdd.y));
+        if (posAdd.y != 0.0f && !level.isTileWall(x, y))
+            pos.y += posAdd.y;
     }
 }
 
 
-void Unit::draw(SDL_Renderer *renderer, int tileSize) {
+void Unit::draw(SDL_Renderer *renderer, int tileSize, TTF_Font *font) {
     if (renderer != nullptr) {
-        if (!timerJustHurt.timeSIsZero())
+        if (!timerSlowed.timeSIsZero()) {
+            SDL_SetTextureColorMod(texture, 0, 0, 255);
+        } else if (!timerJustHurt.timeSIsZero()) {
             SDL_SetTextureColorMod(texture, 255, 0, 0);
-        else
+        } else
             SDL_SetTextureColorMod(texture, 255, 255, 255);
 
         int w, h;
@@ -68,11 +69,11 @@ void Unit::draw(SDL_Renderer *renderer, int tileSize) {
                 (int) (pos.y * tileSize) - h / 2,
                 w,
                 h};
+        SDL_RenderCopy(renderer, texture, nullptr, &rect);
 
-        TTF_Font *font = TTF_OpenFont("../Data/font/fox5.ttf", 24);
         SDL_Color TextColor = {255, 255, 255};
-        SDL_Surface *surfHPT = TTF_RenderText_Blended(font, std::to_string(healthCurrent).c_str(), TextColor);
-        SDL_Texture *textHP = SDL_CreateTextureFromSurface(renderer, surfHPT);
+        surfHPT = TTF_RenderText_Blended(font, std::to_string(hp).c_str(), TextColor);
+        textHP = SDL_CreateTextureFromSurface(renderer, surfHPT);
         int wHP, hHP;
         SDL_QueryTexture(textHP, nullptr, nullptr, &wHP, &hHP);
         SDL_Rect rectHP = {
@@ -80,9 +81,9 @@ void Unit::draw(SDL_Renderer *renderer, int tileSize) {
                 (int) (pos.y * tileSize) - hHP,
                 wHP / 2,
                 hHP / 2};
-
-        SDL_RenderCopy(renderer, texture, nullptr, &rect);
+        SDL_FreeSurface(surfHPT);
         SDL_RenderCopy(renderer, textHP, nullptr, &rectHP);
+        SDL_DestroyTexture(textHP);
     }
 }
 
@@ -93,7 +94,7 @@ bool Unit::checkOverlap(Vector2D posOther, float sizeOther) {
 
 
 bool Unit::isAlive() {
-    return (healthCurrent > 0);
+    return (hp > 0);
 }
 
 
@@ -102,11 +103,17 @@ Vector2D Unit::getPos() {
 }
 
 
-void Unit::removeHealth(int damage) {
+void Unit::removeHealth(int damage, float slow) {
     if (damage > 0) {
-        healthCurrent -= damage;
-        if (healthCurrent < 0)
-            healthCurrent = 0;
+
+        hp -= damage;
+        if (hp < 0)
+            hp = 0;
+
+        if (slow != 0) {
+            timerSlowed.resetToMax();
+            slowed = slow;
+        }
 
         timerJustHurt.resetToMax();
     }

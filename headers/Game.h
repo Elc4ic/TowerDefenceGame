@@ -9,6 +9,7 @@
 #include "Projectile.h"
 #include "Level.h"
 #include "Timer.h"
+#include "SDL2/SDL_ttf.h"
 
 
 class Game {
@@ -16,7 +17,8 @@ private:
     enum class PlacementMode {
         wizard,
         archer,
-        grenadier
+        grenadier,
+        froster
     } placementModeCurrent;
 
     const int wizardCost = 120;
@@ -31,21 +33,21 @@ public:
 
 
 private:
-    void processEvents(SDL_Renderer *renderer, bool &running, int *money);
+    void processEvents(SDL_Renderer *renderer, bool &running);
 
-    void update(SDL_Renderer *renderer, float dT, int *target_hp, int *money, bool &running);
+    void update(SDL_Renderer *renderer, float dT, bool &running);
 
-    void updateUnits(float dT, int *target_hp, int *money);
+    void updateUnits(float dT);
 
     void updateProjectiles(float dT);
 
     void updateSpawnUnitsIfRequired(SDL_Renderer *renderer, float dT);
 
-    void draw(SDL_Renderer *renderer, int *target_hp, int *money);
+    void draw(SDL_Renderer *renderer);
 
-    void addUnit(SDL_Renderer *renderer, Vector2D posMouse);
+    void addUnit(SDL_Renderer *renderer, Vector2D posMouse,int UnitType);
 
-    void addTurret(SDL_Renderer *renderer, Vector2D posMouse, int TurretType, int *money);
+    void addTurret(SDL_Renderer *renderer, Vector2D posMouse, int TurretType);
 
     void removeTurretsAtMousePosition(Vector2D posMouse);
 
@@ -63,5 +65,16 @@ private:
 
     Timer spawnTimer, roundTimer;
     int spawnUnitCount = 0;
-
+    int wave;
+    int target_hp;
+    int money;
+    TTF_Font *font;
+    SDL_Surface *surfHPT ;
+    SDL_Surface *surfMoneyT;
+    SDL_Surface *surfWave;
+    SDL_Surface *surfM;
+    SDL_Texture *textHP;
+    SDL_Texture *textMoney;
+    SDL_Texture *textMode;
+    SDL_Texture *textWave;
 };

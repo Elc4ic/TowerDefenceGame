@@ -28,3 +28,8 @@ public:
     Wizard(SDL_Renderer* renderer, Vector2D setPos);
 };
 
+class Froster: public Turret
+{
+public:
+    Froster(SDL_Renderer* renderer, Vector2D setPos);
+};
