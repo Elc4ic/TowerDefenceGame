@@ -112,7 +112,8 @@ void Unit::removeHealth(int damage, float slow) {
 
         if (slow != 0) {
             timerSlowed.resetToMax();
-            slowed = slow;
+            if (slow < slowed)
+                slowed = slow;
         }
 
         timerJustHurt.resetToMax();

@@ -85,8 +85,7 @@ void Game::processEvents(SDL_Renderer *renderer, bool &running) {
                         placementModeCurrent = PlacementMode::grenadier;
                         break;
                     case SDL_SCANCODE_4:
-                        placementModeCurrent = PlacementMode::froster
-                                ;
+                        placementModeCurrent = PlacementMode::froster;
                         break;
 
 
@@ -104,22 +103,22 @@ void Game::processEvents(SDL_Renderer *renderer, bool &running) {
             case SDL_BUTTON_LEFT:
                 switch (placementModeCurrent) {
                     case PlacementMode::wizard:
-                        if (mouseDownThisFrame && money >= wizardCost) {
+                        if (mouseDownThisFrame) {
                             addTurret(renderer, posMouse, 1);
                         }
                         break;
                     case PlacementMode::archer:
-                        if (mouseDownThisFrame && money >= archerCost) {
+                        if (mouseDownThisFrame) {
                             addTurret(renderer, posMouse, 2);
                         }
                         break;
                     case PlacementMode::grenadier:
-                        if (mouseDownThisFrame && money >= grenadierCost) {
+                        if (mouseDownThisFrame) {
                             addTurret(renderer, posMouse, 3);
                         }
                         break;
                     case PlacementMode::froster:
-                        if (mouseDownThisFrame && money >= wizardCost) {
+                        if (mouseDownThisFrame) {
                             addTurret(renderer, posMouse, 4);
                         }
                         break;
@@ -164,7 +163,7 @@ void Game::updateUnits(float dT) {
             (*it)->update(dT, level, listUnits, &target_hp);
 
             if (!(*it)->isAlive()) {
-                money += 5 + wave;
+                money += 5 + wave / 2;
                 it = listUnits.erase(it);
                 increment = false;
             }
@@ -245,7 +244,7 @@ void Game::draw(SDL_Renderer *renderer) {
     SDL_Color TextColor = {255, 255, 255};
     surfHPT = TTF_RenderText_Blended(font, std::to_string(target_hp).c_str(), TextColor);
     surfMoneyT = TTF_RenderText_Blended(font, std::to_string(money).c_str(), TextColor);
-    surfWave = TTF_RenderText_Blended(font, (std::to_string(wave) + "from 20 wave").c_str(), TextColor);
+    surfWave = TTF_RenderText_Blended(font, (std::to_string(wave) + " from 20 wave").c_str(), TextColor);
     switch (placementModeCurrent) {
         case PlacementMode::wizard:
             surfM = TTF_RenderText_Blended(font, ("wizard " + std::to_string(wizardCost)).c_str(), TextColor);
@@ -276,7 +275,7 @@ void Game::draw(SDL_Renderer *renderer) {
     SDL_Rect textHP_rect = {40, 5, wHPT, hHPT};
     SDL_Rect textM_rect = {110, 5, wMT, hMT};
     SDL_Rect textMode_rect = {250, 5, wM, hM};
-    SDL_Rect textWave_rect = {800, 5, wWave, hWave};
+    SDL_Rect textWave_rect = {980 - wWave, 5, wWave, hWave};
     SDL_Rect rectHP = {5, 5, wHP, hHP};
     SDL_Rect rectC = {80, 5, wC, hC};
 
@@ -326,19 +325,19 @@ void Game::addTurret(SDL_Renderer *renderer, Vector2D posMouse, int TurretType) 
             it++;
     }
     Vector2D pos((int) posMouse.x + 0.5f, (int) posMouse.y + 0.5f);
-    if (TurretType == 1) {
+    if (TurretType == 1 && money >= wizardCost) {
         Wizard wizard = {renderer, pos};
         listTurrets.emplace_back(wizard);
         money -= wizardCost;
-    } else if (TurretType == 2) {
+    } else if (TurretType == 2 && money >= archerCost) {
         Archer arch = {renderer, pos};
         listTurrets.emplace_back(arch);
         money -= archerCost;
-    } else if (TurretType == 4) {
+    } else if (TurretType == 4 && money >= wizardCost) {
         Froster frost = {renderer, pos};
         listTurrets.emplace_back(frost);
         money -= wizardCost;
-    } else {
+    } else if (TurretType == 3 && money >= grenadierCost) {
         Grenadier grenadier = {renderer, pos};
         listTurrets.emplace_back(grenadier);
         money -= grenadierCost;

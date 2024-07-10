@@ -18,7 +18,7 @@ Grenadier::Grenadier(SDL_Renderer *renderer, Vector2D setPos) :
                 setPos,
                 1.5f,
                 "Grenadier.bmp",
-                3.0f, 140.0f, 6, true, 0, 20.0f,3
+                3.0f, 140.0f, 6, true, 0, 20.0f,4
         ) {
 
 }
@@ -42,7 +42,7 @@ Froster::Froster(SDL_Renderer *renderer, Vector2D setPos) :
                 0.5f,
                 "Frostier.bmp",
                 1.5f,
-                360.0f, 0, true, 0.5f, 1.5f,1
+                360.0f, 0, true, 0.65f, 1.5f,3
         ) {
 
 }
