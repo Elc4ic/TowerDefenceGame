@@ -2,9 +2,10 @@
 
 
 Level::Level(SDL_Renderer *renderer, int setTileCountX, int setTileCountY) :
-        tileCountX(setTileCountX), tileCountY(setTileCountY){
+        tileCountX(setTileCountX), tileCountY(setTileCountY) {
     textureTileWall = TextureLoader::loadTexture(renderer, "Tile Wall2.bmp");
     textureTileTarget = TextureLoader::loadTexture(renderer, "Tile Target.bmp");
+    textureTileSpacer = TextureLoader::loadTexture(renderer, "Turret Spacer.bmp");
     textureTileEnemySpawner = TextureLoader::loadTexture(renderer, "EnemySpawner.bmp");
     textureTileEmpty = TextureLoader::loadTexture(renderer, "Tile Road.bmp");
 
@@ -16,10 +17,12 @@ Level::Level(SDL_Renderer *renderer, int setTileCountX, int setTileCountY) :
             if (map_creator[y][x] == 2) {
                 setTileType(x, y, TileType::enemySpawner);
             } else if (map_creator[y][x] == 0) {
-                setTileWall(x, y, true);
+                setTileType(x, y, TileType::wall);
             } else if (map_creator[y][x] == 3) {
                 targetX = x;
                 targetY = y;
+            } else if (map_creator[y][x] == 4) {
+                setTileType(x, y, TileType::spacer);
             }
         }
     }
@@ -60,6 +63,16 @@ void Level::draw(SDL_Renderer *renderer, int tileSize) {
                         h};
                 SDL_RenderCopy(renderer, textureTileWall, nullptr, &rect);
             }
+            if (isTileSpacer(x, y)) {
+                int w, h;
+                SDL_QueryTexture(textureTileSpacer, nullptr, nullptr, &w, &h);
+                SDL_Rect rect = {
+                        x * tileSize + tileSize / 2 - w / 2,
+                        y * tileSize + tileSize / 2 - h / 2,
+                        w,
+                        h};
+                SDL_RenderCopy(renderer, textureTileSpacer, nullptr, &rect);
+            }
         }
     }
 }
@@ -95,12 +108,9 @@ bool Level::isTileWall(int x, int y) {
     return (getTileType(x, y) == TileType::wall);
 }
 
-
-void Level::setTileWall(int x, int y, bool setWall) {
-    if (getTileType(x, y) != TileType::enemySpawner)
-        setTileType(x, y, (setWall ? TileType::wall : TileType::empty));
+bool Level::isTileSpacer(int x, int y) {
+    return (getTileType(x, y) == TileType::spacer);
 }
-
 
 Level::TileType Level::getTileType(int x, int y) {
     int index = x + y * tileCountX;
@@ -171,7 +181,8 @@ void Level::calculateDistances() {
             if (indexNeighbor > -1 && indexNeighbor < listTiles.size() &&
                 neighborX > -1 && neighborX < tileCountX &&
                 neighborY > -1 && neighborY < tileCountY &&
-                listTiles[indexNeighbor].type != TileType::wall) {
+                listTiles[indexNeighbor].type != TileType::wall &&
+                listTiles[indexNeighbor].type != TileType::spacer) {
 
                 if (listTiles[indexNeighbor].flowDistance == flowDistanceMax) {
                     listTiles[indexNeighbor].flowDistance = listTiles[indexCurrent].flowDistance + 1;
@@ -198,7 +209,7 @@ void Level::calculateFlowDirections() {
         if (listTiles[indexCurrent].flowDistance != flowDistanceMax) {
             unsigned char flowFieldBest = listTiles[indexCurrent].flowDistance;
 
-            for (auto listNeighbor : listNeighbors) {
+            for (auto listNeighbor: listNeighbors) {
                 int offsetX = listNeighbor[0];
                 int offsetY = listNeighbor[1];
 

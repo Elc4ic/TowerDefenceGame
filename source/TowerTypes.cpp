@@ -7,7 +7,7 @@ Wizard::Wizard(SDL_Renderer *renderer, Vector2D setPos) :
                 setPos,
                 1.0f,
                 "Wizard.bmp",
-                5.0f, 180.0f, 6, false, 0, 20.0f,6
+                5.0f, 200.0f, 6, false, 0, 20.0f,7
         ) {
 
 }
@@ -30,7 +30,7 @@ Archer::Archer(SDL_Renderer *renderer, Vector2D setPos) :
                 0.3f,
                 "Archer.bmp",
                 6.0f,
-                360.0f, 1, false, 0, 20.0f,2
+                360.0f, 2, false, 0, 20.0f,3
         ) {
 
 }
@@ -41,8 +41,8 @@ Froster::Froster(SDL_Renderer *renderer, Vector2D setPos) :
                 setPos,
                 0.5f,
                 "Frostier.bmp",
-                1.5f,
-                360.0f, 0, true, 0.65f, 1.5f,3
+                1.7f,
+                360.0f, 2, true, 0.60f, 1.5f,4
         ) {
 
 }

@@ -145,7 +145,7 @@ void Game::update(SDL_Renderer *renderer, float dT, bool &running) {
 
     updateSpawnUnitsIfRequired(renderer, dT);
 
-    if (target_hp == 0) {
+    if (target_hp <= 0) {
         listTurrets.clear();
         listUnits.clear();
         listProjectiles.clear();
@@ -317,6 +317,7 @@ void Game::addUnit(SDL_Renderer *renderer, Vector2D posMouse, int UnitType) {
 
 
 void Game::addTurret(SDL_Renderer *renderer, Vector2D posMouse, int TurretType) {
+    if(level.map_creator[(int) posMouse.y][(int) posMouse.x] != 4) return;
     for (auto it = listTurrets.begin(); it != listTurrets.end();) {
         if ((*it).checkIfOnTile((int) posMouse.x, (int) posMouse.y)) {
             (*it).lvlUp(&money);

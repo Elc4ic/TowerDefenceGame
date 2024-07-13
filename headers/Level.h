@@ -14,7 +14,8 @@ private:
     enum class TileType : char {
         empty,
         wall,
-        enemySpawner
+        enemySpawner,
+        spacer
     };
 
     static const unsigned char flowDistanceMax = 255;
@@ -36,19 +37,19 @@ public:
 
     bool isTileWall(int x, int y);
 
-    void setTileWall(int x, int y, bool setWall);
+    bool isTileSpacer(int x, int y);
 
     Vector2D getTargetPos();
 
     Vector2D getFlowNormal(int x, int y);
 
-    const int map_creator[9][15] = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    const int map_creator[9][15] = {{0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0},
                                     {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0},
-                                    {0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0},
-                                    {0, 1, 0, 2, 0, 0, 1, 1, 1, 3, 0, 0, 1, 0, 0},
-                                    {0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0},
-                                    {0, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                                    {0, 1, 4, 0, 4, 4, 1, 4, 4, 4, 4, 4, 1, 0, 0},
+                                    {0, 1, 4, 2, 0, 4, 1, 1, 1, 3, 0, 4, 1, 0, 0},
+                                    {0, 1, 0, 1, 0, 0, 4, 4, 4, 4, 0, 0, 2, 0, 0},
+                                    {0, 1, 1, 1, 1, 2, 4, 0, 0, 0, 0, 0, 0, 0, 0},
+                                    {0, 4, 4, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
                                     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
                                     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     };
@@ -76,5 +77,6 @@ private:
     SDL_Texture *textureTileWall = nullptr,
             *textureTileTarget = nullptr,
             *textureTileEnemySpawner = nullptr,
+            *textureTileSpacer = nullptr,
             *textureTileEmpty = nullptr;
 };

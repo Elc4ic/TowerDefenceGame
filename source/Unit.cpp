@@ -43,15 +43,14 @@ void Unit::update(float dT, Level &level, std::vector<std::shared_ptr<Unit>> &li
         const float spacing = size / 2;
         int x = (int) (pos.x + posAdd.x + std::copysign(spacing, posAdd.x));
         int y = (int) (pos.y);
-        if (posAdd.x != 0.0f && !level.isTileWall(x, y))
+        if (posAdd.x != 0.0f && !level.isTileWall(x, y) && !level.isTileSpacer(x, y))
             pos.x += posAdd.x;
         x = (int) (pos.x);
         y = (int) (pos.y + posAdd.y + std::copysign(spacing, posAdd.y));
-        if (posAdd.y != 0.0f && !level.isTileWall(x, y))
+        if (posAdd.y != 0.0f && !level.isTileWall(x, y) && !level.isTileSpacer(x, y))
             pos.y += posAdd.y;
     }
 }
-
 
 void Unit::draw(SDL_Renderer *renderer, int tileSize, TTF_Font *font) {
     if (renderer != nullptr) {

@@ -21,9 +21,9 @@ private:
         froster
     } placementModeCurrent;
 
-    const int wizardCost = 120;
-    const int archerCost = 70;
-    const int grenadierCost = 200;
+    const int wizardCost = 100;
+    const int archerCost = 60;
+    const int grenadierCost = 160;
 
 
 public:
