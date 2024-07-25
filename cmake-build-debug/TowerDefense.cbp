@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="TowerDefense"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/PROGRA~2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="C:/PROGRA~2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="OpenGLTest">
+				<Option output="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug/OpenGLTest.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/headers"/>
+					<Add directory="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/source"/>
+					<Add directory="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/include"/>
+					<Add directory="C:/Program Files (x86)/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/include/c++"/>
+					<Add directory="C:/Program Files (x86)/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="C:/Program Files (x86)/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/include/c++/backward"/>
+					<Add directory="C:/Program Files (x86)/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/include"/>
+					<Add directory="C:/Program Files (x86)/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/include-fixed"/>
+					<Add directory="C:/Program Files (x86)/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/PROGRA~2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug/Makefile&quot;  VERBOSE=1 OpenGLTest"/>
+					<CompileFile command="C:/PROGRA~2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="OpenGLTest/fast">
+				<Option output="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug/OpenGLTest.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/headers"/>
+					<Add directory="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/source"/>
+					<Add directory="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/include"/>
+					<Add directory="C:/Program Files (x86)/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/include/c++"/>
+					<Add directory="C:/Program Files (x86)/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="C:/Program Files (x86)/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/include/c++/backward"/>
+					<Add directory="C:/Program Files (x86)/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/include"/>
+					<Add directory="C:/Program Files (x86)/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/include-fixed"/>
+					<Add directory="C:/Program Files (x86)/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/13.2.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/PROGRA~2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug/Makefile&quot;  VERBOSE=1 OpenGLTest/fast"/>
+					<CompileFile command="C:/PROGRA~2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/PROGRA~2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="C:/PROGRA~2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/PROGRA~2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="C:/PROGRA~2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/PROGRA~2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/headers/UnitTypes.h">
+			<Option target="OpenGLTest"/>
+		</Unit>
+		<Unit filename="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/main.cpp">
+			<Option target="OpenGLTest"/>
+		</Unit>
+		<Unit filename="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/source/Game.cpp">
+			<Option target="OpenGLTest"/>
+		</Unit>
+		<Unit filename="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/source/Level.cpp">
+			<Option target="OpenGLTest"/>
+		</Unit>
+		<Unit filename="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/source/MathAddon.cpp">
+			<Option target="OpenGLTest"/>
+		</Unit>
+		<Unit filename="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/source/Projectile.cpp">
+			<Option target="OpenGLTest"/>
+		</Unit>
+		<Unit filename="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/source/TextureLoader.cpp">
+			<Option target="OpenGLTest"/>
+		</Unit>
+		<Unit filename="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/source/Timer.cpp">
+			<Option target="OpenGLTest"/>
+		</Unit>
+		<Unit filename="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/source/TowerTypes.cpp">
+			<Option target="OpenGLTest"/>
+		</Unit>
+		<Unit filename="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/source/Turret.cpp">
+			<Option target="OpenGLTest"/>
+		</Unit>
+		<Unit filename="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/source/Unit.cpp">
+			<Option target="OpenGLTest"/>
+		</Unit>
+		<Unit filename="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/source/UnitTypes.cpp">
+			<Option target="OpenGLTest"/>
+		</Unit>
+		<Unit filename="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/source/Vector2D.cpp">
+			<Option target="OpenGLTest"/>
+		</Unit>
+		<Unit filename="C:/Users/Mirex/Desktop/L/TowerDefenceGame-main/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
