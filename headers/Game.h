@@ -77,4 +77,7 @@ private:
     SDL_Texture *textMoney;
     SDL_Texture *textMode;
     SDL_Texture *textWave;
+    SDL_Texture *defeatTexture;
+    SDL_Texture *overlayTexture;
+    bool overlayVisible = true;
 };

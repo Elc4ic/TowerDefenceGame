@@ -1,3 +1,0 @@
-"C:\Program Files\JetBrains\CLion 2024.1.4\bin\cmake\win\x64\bin\cmake.exe" -E rm -f CMakeFiles\OpenGLTest.dir/objects.a
-C:\PROGRA~2\mingw64\bin\ar.exe qc CMakeFiles\OpenGLTest.dir/objects.a @CMakeFiles\OpenGLTest.dir\objects1.rsp
-C:\PROGRA~2\mingw64\bin\C__~1.EXE  -std=c++11 -lmingw32 -g -static-libgcc -static-libstdc++ -Wl,--whole-archive CMakeFiles\OpenGLTest.dir/objects.a -Wl,--no-whole-archive -o OpenGLTest.exe -Wl,--out-implib,libOpenGLTest.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\OpenGLTest.dir\linkLibs.rsp

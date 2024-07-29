@@ -4,7 +4,7 @@
 #include "SDL2/SDL_ttf.h"
 
 
-int main(int argc, char *args[]) {
+[[noreturn]] int main(int argc, char *args[]) {
 
     srand((unsigned) time(nullptr));
 
@@ -35,7 +35,31 @@ int main(int argc, char *args[]) {
                 int windowWidth = 0, windowHeight = 0;
                 SDL_GetWindowSize(window, &windowWidth, &windowHeight);
 
-                Game game(window, renderer, windowWidth, windowHeight);
+                int wS = 200, hS = 80;
+                int mouseX = 0, mouseY = 0;
+                SDL_Texture *startTexture = TextureLoader::loadTexture(renderer, "start.bmp");
+
+                SDL_Event event;
+                bool running = true;
+                while (running) {
+                    SDL_Texture *startTexture = TextureLoader::loadTexture(renderer, "start.bmp");
+                    SDL_Texture *backTexture = TextureLoader::loadTexture(renderer, "background.bmp");
+                    SDL_Rect rectS = {(int) (windowWidth - wS) / 2, (int) (windowHeight - hS) / 2, wS, hS};
+                    SDL_Rect rectBack = {0, 0, windowWidth, windowHeight};
+                    SDL_PollEvent(&event);
+                    SDL_RenderClear(renderer);
+                    SDL_RenderCopy(renderer, backTexture, nullptr, &rectBack);
+                    SDL_RenderCopy(renderer, startTexture, nullptr, &rectS);
+                    SDL_RenderPresent(renderer);
+
+                    SDL_GetMouseState(&mouseX, &mouseY);
+                    if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT &&
+                        mouseX > (windowWidth - wS) / 2 && mouseX < (windowWidth + wS) / 2 &&
+                        mouseY > (windowHeight - hS) / 2 && mouseY < (windowHeight + hS) / 2) {
+                        SDL_RenderClear(renderer);
+                        Game game(window, renderer, windowWidth, windowHeight);
+                    }
+                }
 
                 SDL_DestroyRenderer(renderer);
             }

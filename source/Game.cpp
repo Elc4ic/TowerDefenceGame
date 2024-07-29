@@ -9,11 +9,13 @@
 Game::Game(SDL_Window *window, SDL_Renderer *renderer, int windowWidth, int windowHeight) :
         placementModeCurrent(PlacementMode::archer),
         level(renderer, windowWidth / tileSize, windowHeight / tileSize),
-        spawnTimer(0.3f), roundTimer(2.0f) {
+        spawnTimer(0.3f), roundTimer(3.0f) {
 
     if (window != nullptr && renderer != nullptr) {
         textureCoin = TextureLoader::loadTexture(renderer, "coin.bmp");
         textureHP = TextureLoader::loadTexture(renderer, "HP.bmp");
+        defeatTexture = TextureLoader::loadTexture(renderer, "VICTORY.bmp");
+        overlayTexture = TextureLoader::loadTexture(renderer, "Overlay.bmp");
 
         auto time1 = std::chrono::system_clock::now();
         auto time2 = std::chrono::system_clock::now();
@@ -23,10 +25,11 @@ Game::Game(SDL_Window *window, SDL_Renderer *renderer, int windowWidth, int wind
         target_hp = 20;
         wave = 0;
         font = TTF_OpenFont("../Data/font/fox5.ttf", 24);
+        roundTimer.resetToMax();
 
+        bool runningGame = true;
 
-        bool running = true;
-        while (running) {
+        while (runningGame) {
             time2 = std::chrono::system_clock::now();
             std::chrono::duration<float> timeDelta = time2 - time1;
             float timeDeltaFloat = timeDelta.count();
@@ -34,11 +37,12 @@ Game::Game(SDL_Window *window, SDL_Renderer *renderer, int windowWidth, int wind
             if (timeDeltaFloat >= dT) {
                 time1 = time2;
 
-                processEvents(renderer, running);
-                update(renderer, dT, running);
+                processEvents(renderer, runningGame);
+                update(renderer, dT, runningGame);
                 draw(renderer);
             }
         }
+        runningGame = true;
         TTF_CloseFont(font);
     }
 }
@@ -87,8 +91,9 @@ void Game::processEvents(SDL_Renderer *renderer, bool &running) {
                     case SDL_SCANCODE_4:
                         placementModeCurrent = PlacementMode::froster;
                         break;
-
-
+                    case SDL_SCANCODE_H:
+                        overlayVisible = !overlayVisible;
+                        break;
                 }
         }
     }
@@ -146,10 +151,16 @@ void Game::update(SDL_Renderer *renderer, float dT, bool &running) {
     updateSpawnUnitsIfRequired(renderer, dT);
 
     if (target_hp <= 0) {
-        listTurrets.clear();
         listUnits.clear();
-        listProjectiles.clear();
-        running = false;
+        roundTimer.countDown(dT);
+        SDL_Rect rectS = {300, 100, 400, 400};
+        SDL_RenderCopy(renderer, defeatTexture, nullptr, &rectS);
+        SDL_RenderPresent(renderer);
+        if (roundTimer.timeSIsZero()) {
+            listTurrets.clear();
+            listProjectiles.clear();
+            running = false;
+        }
     }
 }
 
@@ -279,12 +290,17 @@ void Game::draw(SDL_Renderer *renderer) {
     SDL_Rect rectHP = {5, 5, wHP, hHP};
     SDL_Rect rectC = {80, 5, wC, hC};
 
+
     SDL_RenderCopy(renderer, textHP, nullptr, &textHP_rect);
     SDL_RenderCopy(renderer, textMoney, nullptr, &textM_rect);
     SDL_RenderCopy(renderer, textMode, nullptr, &textMode_rect);
     SDL_RenderCopy(renderer, textWave, nullptr, &textWave_rect);
     SDL_RenderCopy(renderer, textureHP, nullptr, &rectHP);
     SDL_RenderCopy(renderer, textureCoin, nullptr, &rectC);
+    if (overlayVisible) {
+        SDL_Rect rectOver = {5, 300, 450, 294};
+        SDL_RenderCopy(renderer, overlayTexture, nullptr, &rectOver);
+    }
 
     SDL_FreeSurface(surfM);
     SDL_FreeSurface(surfWave);
@@ -317,7 +333,7 @@ void Game::addUnit(SDL_Renderer *renderer, Vector2D posMouse, int UnitType) {
 
 
 void Game::addTurret(SDL_Renderer *renderer, Vector2D posMouse, int TurretType) {
-    if(level.map_creator[(int) posMouse.y][(int) posMouse.x] != 4) return;
+    if (level.map_creator[(int) posMouse.y][(int) posMouse.x] != 4) return;
     for (auto it = listTurrets.begin(); it != listTurrets.end();) {
         if ((*it).checkIfOnTile((int) posMouse.x, (int) posMouse.y)) {
             (*it).lvlUp(&money);
