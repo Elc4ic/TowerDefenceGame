@@ -14,7 +14,8 @@ Game::Game(SDL_Window *window, SDL_Renderer *renderer, int windowWidth, int wind
     if (window != nullptr && renderer != nullptr) {
         textureCoin = TextureLoader::loadTexture(renderer, "coin.bmp");
         textureHP = TextureLoader::loadTexture(renderer, "HP.bmp");
-        defeatTexture = TextureLoader::loadTexture(renderer, "VICTORY.bmp");
+        defeatTexture = TextureLoader::loadTexture(renderer, "defeat.bmp");
+        winTexture = TextureLoader::loadTexture(renderer, "victory.bmp");
         overlayTexture = TextureLoader::loadTexture(renderer, "Overlay.bmp");
 
         auto time1 = std::chrono::system_clock::now();
@@ -39,7 +40,7 @@ Game::Game(SDL_Window *window, SDL_Renderer *renderer, int windowWidth, int wind
 
                 processEvents(renderer, runningGame);
                 update(renderer, dT, runningGame);
-                draw(renderer);
+                draw(renderer, runningGame);
             }
         }
         runningGame = true;
@@ -141,26 +142,23 @@ void Game::processEvents(SDL_Renderer *renderer, bool &running) {
 
 
 void Game::update(SDL_Renderer *renderer, float dT, bool &running) {
-    updateUnits(dT);
-
-    for (auto &turretSelected: listTurrets)
-        turretSelected.update(renderer, dT, listUnits, listProjectiles);
-
-    updateProjectiles(dT);
-
-    updateSpawnUnitsIfRequired(renderer, dT);
-
-    if (target_hp <= 0) {
+    if (target_hp <= 0 || wave > 20) {
         listUnits.clear();
         roundTimer.countDown(dT);
-        SDL_Rect rectS = {300, 100, 400, 400};
-        SDL_RenderCopy(renderer, defeatTexture, nullptr, &rectS);
-        SDL_RenderPresent(renderer);
         if (roundTimer.timeSIsZero()) {
             listTurrets.clear();
             listProjectiles.clear();
             running = false;
         }
+    } else {
+        updateUnits(dT);
+
+        for (auto &turretSelected: listTurrets)
+            turretSelected.update(renderer, dT, listUnits, listProjectiles);
+
+        updateProjectiles(dT);
+
+        updateSpawnUnitsIfRequired(renderer, dT);
     }
 }
 
@@ -230,88 +228,97 @@ void Game::updateSpawnUnitsIfRequired(SDL_Renderer *renderer, float dT) {
 }
 
 
-void Game::draw(SDL_Renderer *renderer) {
+void Game::draw(SDL_Renderer *renderer, bool &running) {
     SDL_RenderClear(renderer);
+    if (target_hp <= 0) {
+        SDL_Rect rectS = {248, 150, 494, 230};
+        SDL_RenderCopy(renderer, defeatTexture, nullptr, &rectS);
+        SDL_RenderPresent(renderer);
+    } else if (wave > 20) {
+        SDL_Rect rectS = {248, 150, 494, 230};
+        SDL_RenderCopy(renderer, winTexture, nullptr, &rectS);
+        SDL_RenderPresent(renderer);
+    } else {
+        level.draw(renderer, tileSize);
 
-    level.draw(renderer, tileSize);
+        for (auto &unitSelected: listUnits)
+            if (unitSelected != nullptr)
+                unitSelected->draw(renderer, tileSize, font);
 
-    for (auto &unitSelected: listUnits)
-        if (unitSelected != nullptr)
-            unitSelected->draw(renderer, tileSize, font);
+        for (auto &turretSelected: listTurrets)
+            turretSelected.draw(renderer, tileSize, font);
 
-    for (auto &turretSelected: listTurrets)
-        turretSelected.draw(renderer, tileSize, font);
+        for (auto &projectileSelected: listProjectiles)
+            projectileSelected.draw(renderer, tileSize);
 
-    for (auto &projectileSelected: listProjectiles)
-        projectileSelected.draw(renderer, tileSize);
+        int wHPT = 0, hHPT = 0;
+        int wMT = 0, hMT = 0;
+        int wHP = 0, hHP = 0;
+        int wM = 0, hM = 0;
+        int wC = 0, hC = 0;
+        int wWave = 0, hWave = 0;
 
-    int wHPT = 0, hHPT = 0;
-    int wMT = 0, hMT = 0;
-    int wHP = 0, hHP = 0;
-    int wM = 0, hM = 0;
-    int wC = 0, hC = 0;
-    int wWave = 0, hWave = 0;
+        SDL_Color TextColor = {255, 255, 255};
+        surfHPT = TTF_RenderText_Blended(font, std::to_string(target_hp).c_str(), TextColor);
+        surfMoneyT = TTF_RenderText_Blended(font, std::to_string(money).c_str(), TextColor);
+        surfWave = TTF_RenderText_Blended(font, (std::to_string(wave) + " from 20 wave").c_str(), TextColor);
+        switch (placementModeCurrent) {
+            case PlacementMode::wizard:
+                surfM = TTF_RenderText_Blended(font, ("wizard " + std::to_string(wizardCost)).c_str(), TextColor);
+                break;
+            case PlacementMode::archer:
+                surfM = TTF_RenderText_Blended(font, ("archer " + std::to_string(archerCost)).c_str(), TextColor);
+                break;
+            case PlacementMode::grenadier:
+                surfM = TTF_RenderText_Blended(font, ("grenadier " + std::to_string(grenadierCost)).c_str(), TextColor);
+                break;
+            case PlacementMode::froster:
+                surfM = TTF_RenderText_Blended(font, ("froster " + std::to_string(wizardCost)).c_str(), TextColor);
+                break;
 
-    SDL_Color TextColor = {255, 255, 255};
-    surfHPT = TTF_RenderText_Blended(font, std::to_string(target_hp).c_str(), TextColor);
-    surfMoneyT = TTF_RenderText_Blended(font, std::to_string(money).c_str(), TextColor);
-    surfWave = TTF_RenderText_Blended(font, (std::to_string(wave) + " from 20 wave").c_str(), TextColor);
-    switch (placementModeCurrent) {
-        case PlacementMode::wizard:
-            surfM = TTF_RenderText_Blended(font, ("wizard " + std::to_string(wizardCost)).c_str(), TextColor);
-            break;
-        case PlacementMode::archer:
-            surfM = TTF_RenderText_Blended(font, ("archer " + std::to_string(archerCost)).c_str(), TextColor);
-            break;
-        case PlacementMode::grenadier:
-            surfM = TTF_RenderText_Blended(font, ("grenadier " + std::to_string(grenadierCost)).c_str(), TextColor);
-            break;
-        case PlacementMode::froster:
-            surfM = TTF_RenderText_Blended(font, ("froster " + std::to_string(wizardCost)).c_str(), TextColor);
-            break;
+        }
+        textHP = SDL_CreateTextureFromSurface(renderer, surfHPT);
+        textMoney = SDL_CreateTextureFromSurface(renderer, surfMoneyT);
+        textMode = SDL_CreateTextureFromSurface(renderer, surfM);
+        textWave = SDL_CreateTextureFromSurface(renderer, surfWave);
 
+        SDL_QueryTexture(textHP, nullptr, nullptr, &wHPT, &hHPT);
+        SDL_QueryTexture(textMoney, nullptr, nullptr, &wMT, &hMT);
+        SDL_QueryTexture(textMode, nullptr, nullptr, &wM, &hM);
+        SDL_QueryTexture(textWave, nullptr, nullptr, &wWave, &hWave);
+        SDL_QueryTexture(textureHP, nullptr, nullptr, &wHP, &hHP);
+        SDL_QueryTexture(textureCoin, nullptr, nullptr, &wC, &hC);
+
+        SDL_Rect textHP_rect = {40, 5, wHPT, hHPT};
+        SDL_Rect textM_rect = {110, 5, wMT, hMT};
+        SDL_Rect textMode_rect = {250, 5, wM, hM};
+        SDL_Rect textWave_rect = {980 - wWave, 5, wWave, hWave};
+        SDL_Rect rectHP = {5, 5, wHP, hHP};
+        SDL_Rect rectC = {80, 5, wC, hC};
+
+
+        SDL_RenderCopy(renderer, textHP, nullptr, &textHP_rect);
+        SDL_RenderCopy(renderer, textMoney, nullptr, &textM_rect);
+        SDL_RenderCopy(renderer, textMode, nullptr, &textMode_rect);
+        SDL_RenderCopy(renderer, textWave, nullptr, &textWave_rect);
+        SDL_RenderCopy(renderer, textureHP, nullptr, &rectHP);
+        SDL_RenderCopy(renderer, textureCoin, nullptr, &rectC);
+        if (overlayVisible) {
+            SDL_Rect rectOver = {5, 300, 450, 294};
+            SDL_RenderCopy(renderer, overlayTexture, nullptr, &rectOver);
+        }
+
+        SDL_FreeSurface(surfM);
+        SDL_FreeSurface(surfWave);
+        SDL_FreeSurface(surfMoneyT);
+        SDL_FreeSurface(surfHPT);
+
+        SDL_RenderPresent(renderer);
+        SDL_DestroyTexture(textHP);
+        SDL_DestroyTexture(textMoney);
+        SDL_DestroyTexture(textMode);
+        SDL_DestroyTexture(textWave);
     }
-    textHP = SDL_CreateTextureFromSurface(renderer, surfHPT);
-    textMoney = SDL_CreateTextureFromSurface(renderer, surfMoneyT);
-    textMode = SDL_CreateTextureFromSurface(renderer, surfM);
-    textWave = SDL_CreateTextureFromSurface(renderer, surfWave);
-
-    SDL_QueryTexture(textHP, nullptr, nullptr, &wHPT, &hHPT);
-    SDL_QueryTexture(textMoney, nullptr, nullptr, &wMT, &hMT);
-    SDL_QueryTexture(textMode, nullptr, nullptr, &wM, &hM);
-    SDL_QueryTexture(textWave, nullptr, nullptr, &wWave, &hWave);
-    SDL_QueryTexture(textureHP, nullptr, nullptr, &wHP, &hHP);
-    SDL_QueryTexture(textureCoin, nullptr, nullptr, &wC, &hC);
-
-    SDL_Rect textHP_rect = {40, 5, wHPT, hHPT};
-    SDL_Rect textM_rect = {110, 5, wMT, hMT};
-    SDL_Rect textMode_rect = {250, 5, wM, hM};
-    SDL_Rect textWave_rect = {980 - wWave, 5, wWave, hWave};
-    SDL_Rect rectHP = {5, 5, wHP, hHP};
-    SDL_Rect rectC = {80, 5, wC, hC};
-
-
-    SDL_RenderCopy(renderer, textHP, nullptr, &textHP_rect);
-    SDL_RenderCopy(renderer, textMoney, nullptr, &textM_rect);
-    SDL_RenderCopy(renderer, textMode, nullptr, &textMode_rect);
-    SDL_RenderCopy(renderer, textWave, nullptr, &textWave_rect);
-    SDL_RenderCopy(renderer, textureHP, nullptr, &rectHP);
-    SDL_RenderCopy(renderer, textureCoin, nullptr, &rectC);
-    if (overlayVisible) {
-        SDL_Rect rectOver = {5, 300, 450, 294};
-        SDL_RenderCopy(renderer, overlayTexture, nullptr, &rectOver);
-    }
-
-    SDL_FreeSurface(surfM);
-    SDL_FreeSurface(surfWave);
-    SDL_FreeSurface(surfMoneyT);
-    SDL_FreeSurface(surfHPT);
-
-    SDL_RenderPresent(renderer);
-    SDL_DestroyTexture(textHP);
-    SDL_DestroyTexture(textMoney);
-    SDL_DestroyTexture(textMode);
-    SDL_DestroyTexture(textWave);
 }
 
 
@@ -363,9 +370,10 @@ void Game::addTurret(SDL_Renderer *renderer, Vector2D posMouse, int TurretType) 
 
 void Game::removeTurretsAtMousePosition(Vector2D posMouse) {
     for (auto it = listTurrets.begin(); it != listTurrets.end();) {
-        if ((*it).checkIfOnTile((int) posMouse.x, (int) posMouse.y))
+        if ((*it).checkIfOnTile((int) posMouse.x, (int) posMouse.y)) {
+            money += (it->lvl - 1) * (it->lvl - 1) * 50 / 2 + 50;
             it = listTurrets.erase(it);
-        else
+        } else
             it++;
     }
 }

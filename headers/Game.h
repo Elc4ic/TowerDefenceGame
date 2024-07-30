@@ -35,7 +35,7 @@ public:
 private:
     void processEvents(SDL_Renderer *renderer, bool &running);
 
-    void update(SDL_Renderer *renderer, float dT, bool &running);
+    void update(SDL_Renderer *renderer, float dT,bool &running);
 
     void updateUnits(float dT);
 
@@ -43,7 +43,7 @@ private:
 
     void updateSpawnUnitsIfRequired(SDL_Renderer *renderer, float dT);
 
-    void draw(SDL_Renderer *renderer);
+    void draw(SDL_Renderer *renderer,bool &running);
 
     void addUnit(SDL_Renderer *renderer, Vector2D posMouse,int UnitType);
 
@@ -78,6 +78,7 @@ private:
     SDL_Texture *textMode;
     SDL_Texture *textWave;
     SDL_Texture *defeatTexture;
+    SDL_Texture *winTexture;
     SDL_Texture *overlayTexture;
     bool overlayVisible = true;
 };

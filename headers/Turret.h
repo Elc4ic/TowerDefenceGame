@@ -24,6 +24,8 @@ public:
 
     void lvlUp(int *money);
 
+    int lvl;
+
 private:
     bool updateAngle(float dT);
 
@@ -34,13 +36,11 @@ private:
 
     std::weak_ptr<Unit> findEnemyUnit(std::vector<std::shared_ptr<Unit>> &listUnits);
 
-
     Vector2D pos;
     float speedAngular, weaponRange, angle;
     int damage;
     bool splash;
     int chain;
-    int lvl;
     float distMax;
     float slow;
     int damagePerLvl;
