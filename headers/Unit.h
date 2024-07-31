@@ -9,9 +9,6 @@
 #include "Timer.h"
 #include "SDL2/SDL_ttf.h"
 
-class Game;
-
-
 class Unit {
 public:
     Unit(SDL_Renderer *renderer, Vector2D setPos, const std::string &textureName, float speed, int hp);

@@ -13,7 +13,7 @@
 class Turret {
 public:
     Turret(SDL_Renderer *renderer, Vector2D setPos, float timer, std::string texture, float range, float degSpeed,
-           int damage, bool splash, int chain, float slow, float distMax, int damagePerLVL);
+           int damage, bool splash, int chain, float slow, float distMax, int damagePerLvl,int attackSpeedPerLvl);
 
     void update(SDL_Renderer *renderer, float dT, std::vector<std::shared_ptr<Unit>> &listUnits,
                 std::vector<Projectile> &listProjectiles);
@@ -44,6 +44,7 @@ private:
     float distMax;
     float slow;
     int damagePerLvl;
+    int attackSpeedPerLvl;
 
     Timer timerWeapon;
 

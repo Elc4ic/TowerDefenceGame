@@ -4,10 +4,10 @@
 #include <cmath>
 
 Turret::Turret(SDL_Renderer *renderer, Vector2D setPos, float timer, std::string texture, float range, float degSpeed,
-               int damage, bool splash,int chain,float slow, float distMax, int damagePerLVL) :
+               int damage, bool splash, int chain, float slow, float distMax, int damagePerLvl, int attackSpeedPerLvl) :
         pos(setPos), angle(0.0f), timerWeapon(timer), weaponRange(range),
-        speedAngular(MathAddon::angleDegToRad(degSpeed)), damage(damage), splash(splash), chain(chain),lvl(1), slow(slow),
-        distMax(distMax), damagePerLvl(damagePerLVL) {
+        speedAngular(MathAddon::angleDegToRad(degSpeed)), damage(damage), splash(splash), chain(chain), lvl(1),
+        slow(slow), distMax(distMax), damagePerLvl(damagePerLvl), attackSpeedPerLvl(attackSpeedPerLvl) {
     textureMain = TextureLoader::loadTexture(renderer, texture);
     textureShadow = TextureLoader::loadTexture(renderer, "Turret Shadow.bmp");
 }
@@ -15,7 +15,7 @@ Turret::Turret(SDL_Renderer *renderer, Vector2D setPos, float timer, std::string
 
 void Turret::update(SDL_Renderer *renderer, float dT, std::vector<std::shared_ptr<Unit>> &listUnits,
                     std::vector<Projectile> &listProjectiles) {
-    timerWeapon.countDown(dT);
+    timerWeapon.countDown(dT * (100 + attackSpeedPerLvl * (lvl - 1)) / 100);
 
     if (auto unitTargetSP = unitTarget.lock()) {
         if (!unitTargetSP->isAlive() ||
@@ -54,9 +54,11 @@ bool Turret::updateAngle(float dT) {
 void Turret::shootProjectile(SDL_Renderer *renderer, std::vector<Projectile> &listProjectiles) {
     if (timerWeapon.timeSIsZero()) {
         if (chain != 0)
-            listProjectiles.emplace_back(renderer, pos, Vector2D(angle), damage + lvl * damagePerLvl, splash,chain + lvl, slow, distMax);
+            listProjectiles.emplace_back(renderer, pos, Vector2D(angle), damage + lvl * damagePerLvl, splash,
+                                         chain + lvl, slow, distMax);
         else
-        listProjectiles.emplace_back(renderer, pos, Vector2D(angle), damage + lvl * damagePerLvl, splash,chain, slow, distMax);
+            listProjectiles.emplace_back(renderer, pos, Vector2D(angle), damage + lvl * damagePerLvl, splash, chain,
+                                         slow, distMax);
 
         timerWeapon.resetToMax();
     }
